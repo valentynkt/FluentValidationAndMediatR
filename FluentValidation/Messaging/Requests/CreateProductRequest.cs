@@ -1,6 +1,9 @@
-﻿namespace FluentValidationTest.Messaging.Requests
+﻿using FluentValidationTest.Messaging.Response;
+using MediatR;
+
+namespace FluentValidationTest.Messaging.Requests
 {
-    public class CreateProductRequest
+    public class CreateProductRequest : BaseHttpRequest<CreateProductResponse>
     {
         public int CategoryId { get; set; } 
         public string Name { get; set; }

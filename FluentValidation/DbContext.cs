@@ -13,7 +13,11 @@
         new Category { Id = 1, Name = "Category1", CreatedAt = DateTime.Now, IsActive = true },
         new Category { Id = 2, Name = "Category2", CreatedAt = DateTime.Now, IsActive = true },
     };
-
+    public static async Task AddAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        // add async product to db
+        Products.Add(product);
+    }
     public static List<Product> GetProducts()
     {
         return Products;

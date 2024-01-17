@@ -1,27 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using FluentValidationTest.Messaging.Requests;
 using FluentValidationTest.Operations;
+using MediatR;
 namespace FluentValidation.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
+    private readonly ISender  _mediator;
     private readonly ILogger<ProductController> _logger;
 
-    public ProductController(ILogger<ProductController> logger)
+    public ProductController(ISender mediator,ILogger<ProductController> logger)
     {
+        _mediator = mediator;
         _logger = logger;
     }
 
     // post create product 
     [HttpPost]
-    public IActionResult CreateProduct(CreateProductRequest product)
+    public async Task<IActionResult> CreateProduct(int categoryId, string name)
     {
         //// validate product
         //var validator = new ProductValidator();
@@ -32,10 +30,18 @@ public class ProductController : ControllerBase
         //}
 
         // save product
-    //    
-        var handler = new HandleCreateProduct();
-        handler.OnResponse(product);
+    
+        //  
+        var productRequest = new CreateProductRequest
+        {
+            CategoryId = categoryId,
+            Name = name,
+            Price = 100,
+            IsActive = true
+        };
+     
+        var result = await  _mediator.Send(productRequest);
 
-        return Ok(product);
+        return Ok(result);
     }
 }

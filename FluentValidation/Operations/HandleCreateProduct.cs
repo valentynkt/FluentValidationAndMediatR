@@ -1,9 +1,10 @@
 ﻿using FluentValidationTest.Messaging.Requests;
 using FluentValidationTest.Messaging.Response;
+using MediatR;
 
 namespace FluentValidationTest.Operations
 {
-    public class HandleCreateProduct : ICommand<CreateProductRequest,CreateProductResponse>
+    public class HandleCreateProduct : OperationHandlerAsync<CreateProductRequest,CreateProductResponse>, IRequest
     {
         public HandleCreateProduct()
         {
@@ -11,7 +12,7 @@ namespace FluentValidationTest.Operations
         }
 
 
-        public Task<CreateProductResponse> OnResponse(CreateProductRequest request, CancellationToken cancellationToken = default)
+        public async override Task<CreateProductResponse> OnResponse(CreateProductRequest request, CancellationToken cancellationToken = default)
         {
             var product = new Product
             {
@@ -23,8 +24,9 @@ namespace FluentValidationTest.Operations
                 IsActive = request.IsActive
             };
 
-            DbContext.Products.Add(product);
-            return Task.FromResult(new CreateProductResponse());
+            // add async product to db
+            await DbContext.AddAsync(product, cancellationToken);
+            return new CreateProductResponse();
         }
     }
 }

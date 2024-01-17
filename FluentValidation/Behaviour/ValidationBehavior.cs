@@ -6,7 +6,8 @@ using MediatR;
 namespace FluentValidationTest.Behaviour
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-            where TRequest : IOperationHandlerAsync<TRequest, TResponse>
+            where TRequest : BaseHttpRequest<TResponse>
+            where TResponse : class
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
         public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
